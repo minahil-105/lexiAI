@@ -34,7 +34,7 @@ export default function Home() {
             </div>
             <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold">Flashcard SaaS</h1>
+                <h1 className="text-2xl font-bold">Lexi AI</h1>
               </div>
               <div className="hidden sm:block sm:ml-6">
                 <div className="flex space-x-4">
@@ -65,7 +65,7 @@ export default function Home() {
       <main>
         <section className="text-center my-12">
           <h1 className="text-4xl font-extrabold mb-4">
-            Welcome to Flashcard SaaS
+            Welcome to Lexi AI
           </h1>
           <h2 className="text-2xl mb-8">
             The easiest way to create flashcards from your text.
