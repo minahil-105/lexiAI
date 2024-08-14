@@ -1,13 +1,30 @@
 'use client'
 import { useRouter } from 'next/navigation';
 import { useUser, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-    const router = useRouter();
-    const { isSignedIn } = useUser();
-  
+  const router = useRouter();
+  const { isSignedIn } = useUser();
 
-  const handleSubmit = async () => {
+  const [cards, setCards] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: "physics" }),
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
+
+  const handleCheckout = async () => {
     const checkoutSession = await fetch('/api/checkout_sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -26,42 +43,6 @@ export default function Home() {
 
   return (
     <div>
-      <header className="bg-gray-800 text-white">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <div className="relative flex items-center justify-between h-16">
-            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-              {/* Mobile menu button */}
-            </div>
-            <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-              <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold">Lexi AI</h1>
-              </div>
-              <div className="hidden sm:block sm:ml-6">
-                <div className="flex space-x-4">
-                  {!isSignedIn ? (
-                    <>
-                      <a
-                        href="/sign-in"
-                        className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                      >
-                        Login
-                      </a>
-                      <a
-                        href="/sign-up"
-                        className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                      >
-                        Sign Up
-                      </a>
-                    </>
-                  ) : (
-                    <UserButton />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
       <main>
         <section className="text-center my-12">
           <h1 className="text-4xl font-extrabold mb-4">
@@ -132,7 +113,7 @@ export default function Home() {
                 <li>Feature 4</li>
               </ul>
               <button
-                onClick={handleSubmit}
+                onClick={handleCheckout}
                 className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-600 transition"
               >
                 Choose Plan

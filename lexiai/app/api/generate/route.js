@@ -1,37 +1,57 @@
-// app/api/generate/route.js
-import { NextResponse } from 'next/server';
-import { model } from '../../lib/utils'; // Ensure this path is correct
+import { NextResponse } from 'next/server'
+import OpenAI from 'openai'
+import { model } from '@/lib/utils';
 
-const systemPrompt = `
-You are a flashcard creator. You take in text and create exactly 10 flashcards from it.
-Both front and back should be one sentence long.
-Return the result in the following JSON format:
-{
-  "flashcards":[
+// export async function POST(req) {
+//   const openai = new OpenAI()
+//   const data = await req.text()
+
+//   const completion = await openai.chat.completions.create({
+//     messages: [
+//       { role: 'system', content: systemPrompt },
+//       { role: 'user', content: data },
+//     ],
+//     model: 'gpt-4o',
+//     response_format: { type: 'json_object' },
+//   })
+
+// We'll process the API response in the next step
+// }
+
+
+const SYSTEM_PROMPT = `
+    System prompt: You are a flashcard creator, you take in text and create multiple flashcards from it. Make sure to create exactly 10 flashcards.
+    Both front and back should be one sentence long.
+    You should return in the following JSON format:
     {
-      "front": "Front of the card",
-      "back": "Back of the card"
+    "flashcards":[
+        {
+        "front": "Front of the card",
+        "back": "Back of the card"
+        }
+    ]
     }
-  ]
-}
-`;
+    `
 
-export async function POST(req) {
-  const data = await req.text();
 
+export async function POST(request) {
   try {
-    // Generate the prompt with the system prompt and user input
-    const prompt = `${systemPrompt}\n\nUser input: ${data}`;
+    const { message } = await request.json();
 
-    // Call the appropriate method on the model instance
-    const response = await model.generate({ prompt });
+    console.log('message: ' + message);
 
-    // Handle response and format as needed
-    const flashcards = response.choices?.[0]?.text || [];
-
-    return NextResponse.json({ flashcards });
+    const chat = model.startChat({
+      history: [
+        {
+          role: "user",
+          parts: [{ text: SYSTEM_PROMPT }],
+        },
+      ]
+    });
+    const result = await chat.sendMessage(message);
+    return NextResponse.json({ response: result.response.text() });
   } catch (error) {
-    console.error('Error generating flashcards:', error);
-    return NextResponse.json({ error: 'An error occurred while generating flashcards' }, { status: 500 });
+    console.log('Error:', error);
+    return NextResponse.json({ error: 'Error processing your request' }, { status: 500 });
   }
 }
