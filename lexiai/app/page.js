@@ -50,7 +50,7 @@ export default function Home() {
           Flashcards in a flash
         </h2>
         <div className="flex justify-center space-x-4">
-          <Link href="/">
+          <Link href="/generate">
             <Button >
               Get Started
 
