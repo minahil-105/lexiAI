@@ -1,16 +1,16 @@
 'use client'
-// Import necessary functions from the Firebase Firestore SDK
-import { doc, collection, getDoc, writeBatch, setDoc } from 'firebase/firestore'; // Add setDoc to the imports
-import { db } from '../../firebase'; // Adjust this path based on your Firebase setup
-import { useUser } from '@clerk/nextjs';
+
 import { useState } from 'react';
+import { doc, collection, getDoc, writeBatch, setDoc } from 'firebase/firestore';
+import { db } from '../../firebase'; 
+import { useUser } from '@clerk/nextjs';
 
 export default function Generate() {
   const [text, setText] = useState('');
   const [flashcards, setFlashcards] = useState([]);
   const [setName, setSetName] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { user } = useUser(); // Ensure you're using Clerk for authentication
+  const { user } = useUser(); 
 
   const handleOpenDialog = () => setDialogOpen(true);
   const handleCloseDialog = () => setDialogOpen(false);
@@ -33,24 +33,18 @@ export default function Generate() {
       }
 
       const result = await response.json();
-      console.log('Raw API response:', result);
-
       if (result && result.response) {
         const parsedData = JSON.parse(result.response);
 
         if (parsedData && Array.isArray(parsedData.flashcards)) {
           setFlashcards(parsedData.flashcards);
-          console.log('Parsed flashcards:', parsedData.flashcards);
         } else {
-          console.error('Invalid flashcard structure:', parsedData);
           alert('Received invalid flashcard data.');
         }
       } else {
-        console.error('Invalid API response structure:', result);
         alert('Received invalid flashcard data.');
       }
     } catch (error) {
-      console.error('Error generating flashcards:', error);
       alert('An error occurred while generating flashcards. Please try again.');
     }
   };
@@ -62,7 +56,7 @@ export default function Generate() {
     }
 
     try {
-      const userDocRef = doc(db, 'users', user.id); // Correctly reference user document
+      const userDocRef = doc(db, 'users', user.id); 
       const userDocSnap = await getDoc(userDocRef);
 
       const batch = writeBatch(db);
@@ -76,7 +70,7 @@ export default function Generate() {
       }
 
       const setDocRef = doc(collection(userDocRef, 'flashcardSets'), setName);
-      await setDoc(setDocRef, { flashcards }); // Save the flashcards to the document
+      await setDoc(setDocRef, { flashcards }); 
 
       await batch.commit();
 
@@ -84,7 +78,6 @@ export default function Generate() {
       handleCloseDialog();
       setSetName('');
     } catch (error) {
-      console.error('Error saving flashcards:', error);
       alert('An error occurred while saving flashcards. Please try again.');
     }
   };
@@ -110,17 +103,20 @@ export default function Generate() {
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Generated Flashcards</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {flashcards.map((flashcard, index) => (
-              <div
-                key={index}
-                className="p-4 border rounded-md shadow-sm bg-gray-100"
-              >
-                <h3 className="font-semibold">Front:</h3>
-                <p>{flashcard.front}</p>
-                <h3 className="font-semibold mt-2">Back:</h3>
-                <p>{flashcard.back}</p>
-              </div>
-            ))}
+          {flashcards.map((flashcard, index) => (
+      <div key={index} className="flip-card w-64 h-48">
+        <div className="flip-card-inner">
+          <div className="flip-card-front bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-md shadow-md">
+            <h3 className="font-semibold text-white text-lg">Front:</h3>
+            <p className="text-white text-base">{flashcard.front}</p>
+          </div>
+          <div className="flip-card-back bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-md shadow-md">
+            <h3 className="font-semibold text-white text-lg">Back:</h3>
+            <p className="text-white text-base">{flashcard.back}</p>
+          </div>
+        </div>
+      </div>
+    ))}
           </div>
           <div className="mt-4 flex justify-center">
             <button
@@ -145,10 +141,16 @@ export default function Generate() {
               className="w-full p-2 border rounded-md mb-4"
             />
             <div className="flex justify-end space-x-2">
-              <button onClick={handleCloseDialog} className="px-4 py-2 bg-gray-200 rounded-md">
+              <button
+                onClick={handleCloseDialog}
+                className="px-4 py-2 bg-gray-200 rounded-md"
+              >
                 Cancel
               </button>
-              <button onClick={saveFlashcards} className="px-4 py-2 bg-blue-500 text-white rounded-md">
+              <button
+                onClick={saveFlashcards}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+              >
                 Save
               </button>
             </div>
