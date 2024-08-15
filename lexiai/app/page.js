@@ -1,8 +1,5 @@
-'use client'
-import { useRouter } from 'next/navigation';
-import { useUser } from "@clerk/nextjs";
+
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import { features, pricing } from '@/lib/data';
 import {
   Card,
@@ -19,9 +16,6 @@ import Link from 'next/link';
 
 
 export default function Home() {
-  const router = useRouter();
-
-  const [cards, setCards] = useState(null);
 
   // const handleCheckout = async () => {
   //   const checkoutSession = await fetch('/api/checkout_sessions', {
@@ -42,15 +36,15 @@ export default function Home() {
 
   return (
     <main className='mx-40'>
-      <section className="text-center my-32">
-        <h1 className="text-4xl font-extrabold mb-4">
+      <section className="text-center my-32 bg-bg-image bg-no-repeat bg-cover h-96">
+        <h1 className="text-4xl font-bold tracking-wide mb-4">
           Learn with Lexi AI
         </h1>
-        <h2 className="text-2xl mb-8">
+        <h2 className="text-xl mb-8 tracking-tight">
           Flashcards in a flash
         </h2>
         <div className="flex justify-center space-x-4">
-          <Link href="/generate">
+          <Link href="/sign-in">
             <Button >
               Get Started
 
@@ -72,10 +66,10 @@ export default function Home() {
           {/* Replace these placeholder items with your feature content */}
           {
             features.map(feature => (
-              <Card className="w-1/4 shadow-md">
+              <Card className="w-1/4 shadow-md" key={feature.title}>
                 <CardHeader>
                   <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>{feature.title}</CardDescription>
+                  <CardDescription>{feature.description}</CardDescription>
                 </CardHeader>
               </Card>
             ))
@@ -90,7 +84,7 @@ export default function Home() {
           {/* Replace these placeholder items with your feature content */}
           {
             pricing.map(plan => (
-              <Card className="w-1/4 shadow-md">
+              <Card className="w-1/4 shadow-md" key={plan.title}>
                 <CardHeader>
                   <CardTitle>{plan.title}</CardTitle>
                   <CardDescription>{plan.price}</CardDescription>
