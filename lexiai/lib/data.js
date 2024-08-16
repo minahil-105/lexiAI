@@ -18,16 +18,20 @@ export const navLinks = [
 
 export const features = [
     {
-        title: "Feature 1",
-        description: "Description 1"
+        title: "Intelligent Spaced Repetition",
+    description: "Our AI algorithm optimizes your study schedule to ensure maximum retention and recall.",
+    icon: "clock"
     },
     {
-        title: "Feature 2",
-        description: "Description 2"
+        title: "Personalized Learning Paths",
+    description: "Get tailored learning paths based on your strengths, weaknesses, and learning style.",
+    icon: "chart"
+
     },
     {
-        title: "Feature 3",
-        description: "Description 3"
+        title: "Real-time Progress Tracking",
+    description: "Monitor your progress, identify areas for improvement, and celebrate your achievements.",
+    icon: "graph"
     },
 
 ]
