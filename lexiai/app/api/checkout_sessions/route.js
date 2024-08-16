@@ -31,12 +31,8 @@ export async function POST(req) {
                     quantity: 1,
                 },
             ],
-            success_url: `${req.headers.get(
-                'Referer',
-            )}result?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${req.headers.get(
-                'Referer',
-            )}result?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${req.headers.get('Referer')}result?session_id=${checkoutSession.id}`,
+            cancel_url: `${req.headers.get('Referer')}result?session_id=${checkoutSession.id}`,
         }
 
         const checkoutSession = await stripe.checkout.sessions.create(params)
@@ -63,7 +59,7 @@ export async function GET(req) {
 
         const checkoutSession = await stripe.checkout.sessions.retrieve(session_id)
 
-        return NextResponse.json(checkoutSession)
+        return NextResponse.json({ session: checkoutSession }, { status: 200 })
     } catch (error) {
         console.error('Error retrieving checkout session:', error)
         return NextResponse.json({ error: { message: error.message } }, { status: 500 })

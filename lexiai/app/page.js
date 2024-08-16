@@ -103,9 +103,11 @@ export default function Home() {
                 </ul>
               </CardContent>
               <CardFooter className="flex justify-center mt-6">
+              <Link href="/result">
                 <Button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-full shadow-lg hover:from-purple-600 hover:to-indigo-600 transition duration-300 ease-in-out">
                   Get Started
                 </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
