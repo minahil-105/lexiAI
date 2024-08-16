@@ -44,13 +44,13 @@ export default function CarouselDApiDemo({ params: { deckId } }) {
     if (!deck.cards || deck.cards.length === 0) return <div>Deck is empty</div>
 
     return (
-        <section className="mx-40 flex flex-col items-center justify-center mt-20 ">
-            <Carousel setApi={setApi} className="w-full max-w-lg">
-                <CarouselContent>
+        <section className="mx-20 flex flex-col items-center justify-center mt-16 ">
+            <Carousel setApi={setApi} className="w-full max-w-xl">
+                <CarouselContent >
                     {deck.cards.map((flashcard, index) => (
                         <CarouselItem key={index}>
                             <Card className="border-none" onClick={() => setFlipped(!flipped)}>
-                                <CardContent className={`flex flip-study-card aspect-square items-center justify-center py-12 cursor-pointer ${flipped ? 'flipped' : ''}`}>
+                                <CardContent className={`flex flip-study-card aspect-square items-center justify-center py-16 cursor-pointer ${flipped ? 'flipped' : ''}`}>
                                     <div className="flip-card-inner p-0 m-0">
                                         <div className="flip-card-front bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-md shadow-md overflow-hidden">
                                             <h3 className="font-semibold text-white text-lg">Front:</h3>
@@ -69,7 +69,7 @@ export default function CarouselDApiDemo({ params: { deckId } }) {
                 <CarouselPrevious />
                 <CarouselNext />
             </Carousel>
-            <div className="py-2 text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-muted-foreground">
                 Card {current} of {count}
             </div>
         </section>

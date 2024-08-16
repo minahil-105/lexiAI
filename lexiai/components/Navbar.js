@@ -85,7 +85,7 @@ const Navbar = () => {
                         <div className='flex flex-col gap-2'>
                             <Input placeholder="Deck Name" ref={nameRef} />
                             <Input placeholder="Deck Description" ref={descriptionRef} />
-                            <Textarea placeholder="Description of the Deck" ref={contentRef} />
+                            <Textarea placeholder="Generate using Lexi AI (leave blank for empty deck)" ref={contentRef} />
                             <DialogClose asChild>
                                 <Button onClick={() => handleCreateDeck({
                                     name: nameRef.current.value,
