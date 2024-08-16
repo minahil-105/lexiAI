@@ -71,7 +71,7 @@ const Page = ({ params: { deckId } }) => {
     if (isError) return <div>Error: {error.message}</div>
 
     return (
-        <section className='mx-40 mt-12 flex flex-col gap-3'>
+        <section className='mx-16 md:mx-40 lg:mx-72 mt-12 flex flex-col gap-3'>
             {/* header */}
             <div className='flex flex-col mb-10'>
                 <div className='flex justify-between items-start gap-12 mb-2'>
