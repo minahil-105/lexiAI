@@ -60,7 +60,7 @@
   }
 }
 
-.flip-card, .flip-study-card {
+.flip-card-edit-mode .flip-card, .flip-study-card {
   perspective: 1500px;
   width: 100%;
   border-radius: 10px;

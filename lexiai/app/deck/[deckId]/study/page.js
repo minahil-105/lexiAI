@@ -1,6 +1,5 @@
 "use client"
 import React, { useState, useEffect } from "react"
-
 import { Card, CardContent } from "@/components/ui/card"
 import {
     Carousel,
@@ -34,45 +33,52 @@ export default function CarouselDApiDemo({ params: { deckId } }) {
 
         api.on("select", () => {
             setCurrent(api.selectedScrollSnap() + 1)
+            setFlipped(false) // Reset flip state when changing cards
         })
     }, [api])
 
-    if (isLoading) return <div>Loading...</div>
+    if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
-    if (isError) return <div>Error: {error.message}</div>
+    if (isError) return <div className="flex justify-center items-center h-screen">Error: {error.message}</div>
 
-    if (!deck.cards || deck.cards.length === 0) return <div>Deck is empty</div>
+    if (!deck.cards || deck.cards.length === 0) return <div className="flex justify-center items-center h-screen">Deck is empty</div>
 
     return (
-        <section className="mx-20 flex flex-col items-center justify-center mt-16 ">
-            <Carousel setApi={setApi} className="w-full max-w-xl">
-                <CarouselContent >
+        <div className="flex flex-col items-center justify-center min-h-screen p-16">
+            <Carousel setApi={setApi} className="w-full max-w-3xl">
+                <CarouselContent>
                     {deck.cards.map((flashcard, index) => (
                         <CarouselItem key={index}>
-                            <Card className="border-none" onClick={() => setFlipped(!flipped)}>
-                                <CardContent className={`flex flip-study-card aspect-square items-center justify-center py-16 cursor-pointer ${flipped ? 'flipped' : ''}`}>
-                                    <div className="flip-card-inner p-0 m-0">
-                                        <div className="flip-card-front bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-md shadow-md overflow-hidden">
-                                            <h3 className="font-semibold text-white text-lg">Front:</h3>
-                                            <p className="text-white text-base ">{flashcard.frontContent}</p>
+                            <div className="flex justify-center items-center h-[70vh]">
+                                <Card
+                                    className={`flip-study-card w-full h-full ${flipped ? 'flipped' : ''}`}
+                                    onClick={() => setFlipped(!flipped)}
+                                >
+                                    <CardContent className="h-full">
+                                        <div className="flip-card-inner w-full h-full">
+                                            <div className="flip-card-front bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-md shadow-md flex flex-col justify-center">
+                                                <h3 className="font-semibold text-white text-2xl mb-4">Front:</h3>
+                                                <p className="text-white text-xl">{flashcard.frontContent}</p>
+                                            </div>
+                                            <div className="flip-card-back bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-md shadow-md flex flex-col justify-center">
+                                                <h3 className="font-semibold text-white text-2xl mb-4">Back:</h3>
+                                                <p className="text-white text-xl">{flashcard.backContent}</p>
+                                            </div>
                                         </div>
-                                        <div className="flip-card-back bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-md shadow-md overflow-hidden">
-                                            <h3 className="font-semibold text-white text-lg">Back:</h3>
-                                            <p className="text-white text-base">{flashcard.backContent}</p>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </CarouselItem>
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
             </Carousel>
-            <div className="text-center text-sm text-muted-foreground">
-                Card {current} of {count}
+            <div className="flex justify-center w-full pt-4">
+                <p className="text-sm text-muted-foreground">
+                    Card {current} of {count}
+                </p>
             </div>
-        </section>
+        </div>
     )
 }
-

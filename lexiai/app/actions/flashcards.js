@@ -197,26 +197,39 @@ export async function deleteCard(formData) {
     const { userId } = auth();
     if (!userId) return { error: 'User not authenticated' };
 
+    console.log('Deleting card:', formData);
+
     const { deckId, cardId } = formData;
 
-    const deckRef = doc(db, 'decks', deckId);
-    const deckDoc = await getDoc(deckRef);
-
-    if (!deckDoc.exists() || deckDoc.data()?.userId !== userId) {
-        return { error: 'Deck not found or access denied' };
+    if (!deckId || !cardId) {
+        throw new Error('DeckId and CardId are required');
     }
 
-    await deleteDoc(doc(db, 'decks', deckId, 'cards', cardId));
-    return { success: true };
+    try {
+        const deckRef = doc(db, 'decks', deckId);
+        const deckDoc = await getDoc(deckRef);
+
+        if (!deckDoc.exists() || deckDoc.data()?.userId !== userId) {
+            return { error: 'Deck not found or access denied' };
+        }
+
+        const cardRef = doc(db, 'decks', deckId, 'cards', cardId);
+        await deleteDoc(cardRef);
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error deleting card:', error);
+        return { error: 'Failed to delete card' };
+    }
+
 }
 
 // Update a card in a deck
 export async function updateCard(formData) {
     const { userId } = auth();
     if (!userId) return { error: 'User not authenticated' };
-
-    const deckId = formData.get("deckId");
-    const cardId = formData.get("cardId");
+    console.log('Updating card:', formData);
+    const { deckId, cardId, frontContent, backContent } = formData;
 
     try {
         if (!deckId || !cardId) {
@@ -236,27 +249,11 @@ export async function updateCard(formData) {
             return { error: 'Card not found' };
         }
 
-        const currentCardData = cardDoc.data();
         const updates = {
-            frontContent: formData.get("frontContent"),
-            backContent: formData.get("backContent"),
-            lastReviewed: formData.get("lastReviewed") ? new Date(formData.get("lastReviewed")) : currentCardData.lastReviewed,
-            nextReview: formData.get("nextReview") ? new Date(formData.get("nextReview")) : currentCardData.nextReview,
+            frontContent,
+            backContent,
         };
 
-        const newImage = formData.get('image');
-        if (newImage && newImage.size) {
-            if (currentCardData.image) {
-                const oldImageRef = ref(storage, currentCardData.image);
-                await deleteObject(oldImageRef);
-            }
-            const imageRef = ref(storage, `cards/${Date.now()}.jpg`);
-            await uploadBytes(imageRef, newImage);
-            const imageUrl = await getDownloadURL(imageRef);
-            updates.image = imageUrl;
-        } else {
-            updates.image = currentCardData.image;
-        }
 
         await updateDoc(cardRef, updates);
         return { success: true };
