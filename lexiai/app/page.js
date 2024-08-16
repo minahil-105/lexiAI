@@ -8,106 +8,95 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-
-
-
 export default function Home() {
-
-  // const handleCheckout = async () => {
-  //   const checkoutSession = await fetch('/api/checkout_sessions', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //   });
-  //   const checkoutSessionJson = await checkoutSession.json();
-
-  //   const stripe = await getStripe();
-  //   const { error } = await stripe.redirectToCheckout({
-  //     sessionId: checkoutSessionJson.id,
-  //   });
-
-  //   if (error) {
-  //     console.warn(error.message);
-  //   }
-  // };
-
   return (
-    <main className='md:mx-40 mx-20'>
-      <section className="text-center my-32 bg-bg-image bg-no-repeat bg-cover h-96">
-        <h1 className="text-4xl font-bold tracking-wide mb-4">
+    <main className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
+      {/* Hero Section */}
+      <section className="text-center my-20 md:my-32">
+        <h1 className="text-5xl font-extrabold mb-6 text-indigo-900">
           Learn with Lexi AI
         </h1>
-        <h2 className="text-xl mb-8 tracking-tight">
+        <h2 className="text-2xl mb-8 text-purple-500">
           Flashcards in a flash
         </h2>
-        <div className="flex justify-center space-x-4">
-          <Link href="/sign-in">
-            <Button >
+        <div className="flex justify-center space-x-6">
+          <Link href="/sign-up">
+            <Button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-full shadow-lg hover:from-purple-600 hover:to-indigo-600 transition duration-300 ease-in-out">
               Get Started
-
             </Button>
           </Link>
           <Link href="/">
-            <Button variant="secondary">
+            <Button className="px-6 py-3 bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 rounded-full shadow-lg hover:from-gray-400 hover:to-gray-500 transition duration-300 ease-in-out">
               Learn More
             </Button>
           </Link>
         </div>
       </section>
 
-
-      {/* features */}
-      <section className="my-48">
-        <h2 className="text-3xl font-bold text-center mb-8">Features</h2>
-        <div className="flex items-center justify-center flex-wrap gap-5 w-full mx">
-          {/* Replace these placeholder items with your feature content */}
-          {
-            features.map(feature => (
-              <Card className="w-1/4 shadow-md" key={feature.title}>
-                <CardHeader>
-                  <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))
-          }
+      {/* Features Section */}
+      <section className="my-36 md:my-48">
+        <h2 className="text-4xl font-bold text-center mb-12 text-indigo-900">
+          Features
+        </h2>
+        <div className="flex flex-wrap justify-center gap-8">
+          {features.map((feature, index) => (
+            <Card
+              key={index}
+              className="w-full max-w-xs p-6 bg-gradient-to-r from-white to-indigo-50 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out"
+            >
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-purple-700">
+                  {feature.title}
+                </CardTitle>
+                <CardDescription className="text-indigo-600">
+                  {feature.description}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
         </div>
       </section>
 
-      {/* pricing */}
-      <section className="my-12 text-center">
-        <h2 className="text-3xl font-bold mb-8">Pricing</h2>
-        <div className="flex items-start justify-center flex-wrap gap-5 w-full">
-          {/* Replace these placeholder items with your feature content */}
-          {
-            pricing.map(plan => (
-              <Card className="w-1/4 shadow-md" key={plan.title}>
-                <CardHeader>
-                  <CardTitle>{plan.title}</CardTitle>
-                  <CardDescription>{plan.price}</CardDescription>
-                </CardHeader>
+      {/* Pricing Section */}
+      <section className="my-24 md:my-36 text-center">
+        <h2 className="text-4xl font-bold mb-12 text-indigo-900">Pricing</h2>
+        <div className="flex flex-wrap justify-center gap-8">
+          {pricing.map((plan, index) => (
+            <Card
+              key={index}
+              className="w-full max-w-xs p-6 bg-gradient-to-r from-white to-indigo-50 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out"
+            >
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-purple-700">
+                  {plan.title}
+                </CardTitle>
+                <CardDescription className="text-indigo-600">
+                  {plan.price}
+                </CardDescription>
+              </CardHeader>
 
-                <CardContent>
-                  <ul>
-                    {
-                      plan.features.map(feature => (
-                        <li>{feature}</li>
-                      ))
-                    }
-                  </ul>
-
-                </CardContent>
-                <CardFooter className="flex justify-center">
-                  <Button>Get Started</Button>
-                </CardFooter>
-              </Card>
-            ))
-          }
+              <CardContent>
+                <ul className="list-disc list-inside text-left text-indigo-700">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="mb-2">
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter className="flex justify-center mt-6">
+                <Button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-full shadow-lg hover:from-purple-600 hover:to-indigo-600 transition duration-300 ease-in-out">
+                  Get Started
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </section>
-    </main >
+    </main>
   );
 }
