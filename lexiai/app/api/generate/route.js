@@ -1,23 +1,5 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
 import { model } from '@/lib/utils';
-
-// export async function POST(req) {
-//   const openai = new OpenAI()
-//   const data = await req.text()
-
-//   const completion = await openai.chat.completions.create({
-//     messages: [
-//       { role: 'system', content: systemPrompt },
-//       { role: 'user', content: data },
-//     ],
-//     model: 'gpt-4o',
-//     response_format: { type: 'json_object' },
-//   })
-
-// We'll process the API response in the next step
-// }
-
 
 const SYSTEM_PROMPT = `
     System prompt: You are a flashcard creator, you take in text and create multiple flashcards from it. Make sure to create exactly 10 flashcards.
@@ -32,7 +14,6 @@ const SYSTEM_PROMPT = `
     ]
     }
     `
-
 
 export async function POST(request) {
   try {

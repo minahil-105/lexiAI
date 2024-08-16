@@ -1,5 +1,21 @@
 
 // features for a ai powered flashcards app  to display on cards
+
+export const navLinks = [
+    {
+        title: "Home",
+        href: "/"
+    },
+    {
+        title: "Decks",
+        href: "/decks"
+    },
+    {
+        title: "Pricing",
+        href: "/pricing"
+    },
+]
+
 export const features = [
     {
         title: "Feature 1",

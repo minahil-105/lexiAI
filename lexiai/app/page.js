@@ -35,7 +35,7 @@ export default function Home() {
   // };
 
   return (
-    <main className='mx-40'>
+    <main className='md:mx-40 mx-20'>
       <section className="text-center my-32 bg-bg-image bg-no-repeat bg-cover h-96">
         <h1 className="text-4xl font-bold tracking-wide mb-4">
           Learn with Lexi AI

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { doc, collection, getDoc, writeBatch, setDoc } from 'firebase/firestore';
-import { db } from '../../firebase'; 
+import { db } from '../../firebase';
 import { useUser } from '@clerk/nextjs';
 
 export default function Generate() {
@@ -10,7 +10,7 @@ export default function Generate() {
   const [flashcards, setFlashcards] = useState([]);
   const [setName, setSetName] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { user } = useUser(); 
+  const { user } = useUser();
 
   const handleOpenDialog = () => setDialogOpen(true);
   const handleCloseDialog = () => setDialogOpen(false);
@@ -56,7 +56,7 @@ export default function Generate() {
     }
 
     try {
-      const userDocRef = doc(db, 'users', user.id); 
+      const userDocRef = doc(db, 'users', user.id);
       const userDocSnap = await getDoc(userDocRef);
 
       const batch = writeBatch(db);
@@ -70,7 +70,7 @@ export default function Generate() {
       }
 
       const setDocRef = doc(collection(userDocRef, 'flashcardSets'), setName);
-      await setDoc(setDocRef, { flashcards }); 
+      await setDoc(setDocRef, { flashcards });
 
       await batch.commit();
 
@@ -103,20 +103,20 @@ export default function Generate() {
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Generated Flashcards</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {flashcards.map((flashcard, index) => (
-      <div key={index} className="flip-card w-64 h-48">
-        <div className="flip-card-inner">
-          <div className="flip-card-front bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-md shadow-md">
-            <h3 className="font-semibold text-white text-lg">Front:</h3>
-            <p className="text-white text-base">{flashcard.front}</p>
-          </div>
-          <div className="flip-card-back bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-md shadow-md">
-            <h3 className="font-semibold text-white text-lg">Back:</h3>
-            <p className="text-white text-base">{flashcard.back}</p>
-          </div>
-        </div>
-      </div>
-    ))}
+            {flashcards.map((flashcard, index) => (
+              <div key={index} className="flip-card w-64 h-48">
+                <div className="flip-card-inner">
+                  <div className="flip-card-front bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-md shadow-md">
+                    <h3 className="font-semibold text-white text-lg">Front:</h3>
+                    <p className="text-white text-base">{flashcard.front}</p>
+                  </div>
+                  <div className="flip-card-back bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-md shadow-md">
+                    <h3 className="font-semibold text-white text-lg">Back:</h3>
+                    <p className="text-white text-base">{flashcard.back}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
           <div className="mt-4 flex justify-center">
             <button
