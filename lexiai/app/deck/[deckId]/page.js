@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator"
 
 
 const page = ({ params: { deckId } }) => {
-
     const { data: deck, isLoading, isError, error } = useQuery({
         queryKey: ['deck', deckId],
         queryFn: async () => {
