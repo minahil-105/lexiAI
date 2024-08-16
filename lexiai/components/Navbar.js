@@ -42,15 +42,15 @@ const Navbar = () => {
     });
 
     return (
-        <nav className="flex items-center justify-between p-4 shadow-md lg:px-32 md:px-12 sm:px-6 bg-indigo-900 text-white relative">
+        <nav className="flex items-center justify-between p-4 shadow-md lg:px-32 md:px-12 sm:px-6 bg-gray-800 text-white relative">
             <Link href="/" className="flex items-center space-x-4">
                 <Book className="h-8 w-8 text-white" />
                 <span className="text-xl font-bold">Lexi AI</span>
             </Link>
 
-            <div className={`flex gap-2 md:gap-4 ${isMobileMenuOpen ? 'hidden sm:flex' : ''}`}>
+            <div className="hidden lg:flex gap-2 md:gap-4">
                 {navLinks.map((link, index) => (
-                    <Link href={link.href} className="hover:text-blue-300 transition-colors" key={index}>
+                    <Link href={link.href} key={index}>
                         <Button
                             variant="ghost"
                             className="rounded-2xl py-0 hover:bg-white hover:text-black transition-colors"
@@ -115,7 +115,7 @@ const Navbar = () => {
                 {/* Mobile menu button */}
                 <button
                     onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-                    className="text-white sm:hidden"
+                    className="lg:hidden text-white"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
@@ -125,7 +125,7 @@ const Navbar = () => {
 
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
-                <div className="absolute top-16 right-0 w-48 bg-indigo-900 text-white shadow-lg p-4 rounded-lg sm:hidden">
+                <div className="lg:hidden absolute top-16 right-0 w-48 bg-gradient-to-r from-teal-400 to-purple-500 text-white shadow-lg p-4 rounded-lg z-10 overflow-y-auto">
                     {navLinks.map((link, index) => (
                         <Link href={link.href} key={index}>
                             <Button

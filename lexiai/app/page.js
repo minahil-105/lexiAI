@@ -11,7 +11,20 @@ import {
 } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { FaClock, FaChartBar } from 'react-icons/fa';
 
+const Icon = ({ name, className }) => {
+  switch (name) {
+    case 'clock':
+      return <FaClock className={className} />;
+    case 'chart':
+      return <FaChartBar className={className} />;
+    case 'graph':
+        return <FaChartBar className={className} />;  
+    default:
+      return null;
+  }
+};
 export default function Home() {
   return (
     <main className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
@@ -49,6 +62,7 @@ export default function Home() {
               className="w-full max-w-xs p-6 bg-gradient-to-r from-white to-indigo-50 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out"
             >
               <CardHeader>
+              <Icon name={feature.icon} className="text-2xl text-purple-700 mr-4" />
                 <CardTitle className="text-xl font-semibold text-purple-700">
                   {feature.title}
                 </CardTitle>
@@ -89,9 +103,11 @@ export default function Home() {
                 </ul>
               </CardContent>
               <CardFooter className="flex justify-center mt-6">
+              <Link href="/result">
                 <Button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-full shadow-lg hover:from-purple-600 hover:to-indigo-600 transition duration-300 ease-in-out">
                   Get Started
                 </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
