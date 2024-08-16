@@ -1,19 +1,50 @@
 "use client"
-import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import React, { useState, useRef } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getDeck } from '@/app/actions/flashcards'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Separator } from "@/components/ui/separator"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Textarea } from '@/components/ui/textarea'
+import { addCardToDeck } from '@/app/actions/flashcards'
+
 
 
 const page = ({ params: { deckId } }) => {
+
+    const [openAddCardDialog, setOpenAddCardDialog] = useState(false)
+    const frontRef = useRef()
+    const backRef = useRef()
+
+    const queryClient = useQueryClient()
     const { data: deck, isLoading, isError, error } = useQuery({
         queryKey: ['deck', deckId],
         queryFn: async () => {
             const data = await getDeck(deckId);
             return data;
         },
+    })
+
+    const { mutate: handleAddCardToDeck } = useMutation({
+        mutationFn: async () => {
+            console.log('Adding card to deck:', deckId);
+            if (!frontRef.current.value || !backRef.current.value) {
+                return;
+            }
+            const data = await addCardToDeck({ deckId, frontContent: frontRef.current.value, backContent: backRef.current.value });
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries('deck')
+        }
     })
 
     if (isLoading) return <div>Loading...</div>
@@ -37,10 +68,25 @@ const page = ({ params: { deckId } }) => {
                             </Button>
                         </Link>
 
+                        <Dialog open={openAddCardDialog} onOpenChange={setOpenAddCardDialog}>
+                            <DialogTrigger>
+                                <Button variant="secondary">Add Card</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Add card to {deck.name} deck</DialogTitle>
+                                </DialogHeader>
 
-                        <Button variant="secondary">
-                            Add Card
-                        </Button>
+                                <Textarea ref={frontRef} placeholder="Front content" />
+                                <Textarea ref={backRef} placeholder="Back content" />
+                                <Button onClick={() => {
+                                    handleAddCardToDeck()
+                                    setOpenAddCardDialog(false)
+                                }} className="w-full">Add Card</Button>
+
+                            </DialogContent>
+                        </Dialog>
+
 
                         <Link href={`/deck/${deck.id}/study`}>
                             <Button>

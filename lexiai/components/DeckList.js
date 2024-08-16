@@ -1,10 +1,11 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Skeleton } from './ui/skeleton'
 import { getUserDecks } from '@/app/actions/flashcards'
 import { useQuery } from '@tanstack/react-query'
 import DeckItem from './DeckItem'
+
 
 
 const DeckList = ({ query }) => {
@@ -22,7 +23,6 @@ const DeckList = ({ query }) => {
             {[...Array(6)].map((_, index) => <Skeleton key={index} className="w-80 h-64" />)}
         </div>
     )
-    // console.log('decks:', decks);
 
     if (!isSignedIn)
         return <h1>Please sign in to view your forms.</h1>
@@ -41,6 +41,7 @@ const DeckList = ({ query }) => {
                     <DeckItem deck={deck} />
                 </React.Fragment>
             ))}
+
         </div>
     )
 }

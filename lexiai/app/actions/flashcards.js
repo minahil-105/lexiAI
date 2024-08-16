@@ -54,19 +54,22 @@ export async function createDeck(formData) {
         });
 
         // Generate flashcards
-        const flashcards = await generateFlashcards(content);
+        if (content) {
+            const flashcards = await generateFlashcards(content);
 
 
-        // Add flashcards to the deck
-        for (const flashcard of flashcards) {
-            const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
-            batch.set(cardRef, {
-                frontContent: flashcard.front,
-                backContent: flashcard.back,
-                createdAt: serverTimestamp(),
-                lastReviewed: null,
-                nextReview: null,
-            });
+            // Add flashcards to the deck
+            for (const flashcard of flashcards) {
+                const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
+                batch.set(cardRef, {
+                    frontContent: flashcard.front,
+                    backContent: flashcard.back,
+                    createdAt: serverTimestamp(),
+                    lastReviewed: null,
+                    nextReview: null,
+                });
+            }
+
         }
 
         // Commit the batch
@@ -116,36 +119,31 @@ export async function deleteDeck({ deckId }) {
 
 // Add a card to a deck
 export async function addCardToDeck(formData) {
+    console.log('Adding card to deck:',);
     const { userId } = auth();
     if (!userId) return { error: 'User not authenticated' };
 
-    const deckId = formData.get('deckId');
-    const frontContent = formData.get('frontContent');
-    const backContent = formData.get('backContent');
-    const image = formData.get('image');
+
+
+    const { deckId, frontContent, backContent } = formData;
 
     const deckRef = doc(db, 'decks', deckId);
     const deckDoc = await getDoc(deckRef);
 
     if (!deckDoc.exists() || deckDoc.data()?.userId !== userId) {
-        return { error: 'Deck not found or access denied' };
-    }
-
-    let imageUrl = null;
-    if (image) {
-        const imageRef = ref(storage, `cards/${Date.now()}.jpg`);
-        await uploadBytes(imageRef, image);
-        imageUrl = await getDownloadURL(imageRef);
+        throw new Error('Deck not found or access denied');
     }
 
     const cardRef = await addDoc(collection(db, 'decks', deckId, 'cards'), {
         frontContent,
         backContent,
-        image: imageUrl,
         createdAt: serverTimestamp(),
         lastReviewed: null,
         nextReview: null,
     });
+
+    console.log('Card added:', cardRef.id);
+    console.log('Card added:', cardRef);
 
     return cardRef.id;
 }
@@ -268,7 +266,6 @@ export async function updateCard(formData) {
     }
 }
 
-
 async function generateFlashcards(text) {
     try {
         const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/generate', {
@@ -277,9 +274,7 @@ async function generateFlashcards(text) {
             body: JSON.stringify({ message: text }),
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to generate flashcards');
-        }
+        if (!response.ok) throw new Error('Failed to generate flashcards');
 
         const data = await response.json();
         const flashcards = JSON.parse(data.response).flashcards;
