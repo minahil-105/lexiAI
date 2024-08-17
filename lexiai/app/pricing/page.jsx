@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { pricing } from '@/lib/data'
 
-const page = () => {
+const Page = () => {
   return (
     <section className='mx-20 my-12 text-center'>
         <h2 className="text-3xl font-bold mb-8">Pricing</h2>
@@ -41,4 +41,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

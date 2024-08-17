@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 
 
-const page = () => {
+const Page = () => {
     const [query, setQuery] = useState('')
     return (
         <section className='px-20 py-20 flex flex-col items-center'>
@@ -25,4 +25,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
