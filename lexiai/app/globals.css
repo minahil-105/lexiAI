@@ -102,6 +102,12 @@
   transform: rotateY(180deg);
 }
 
+.border-gradient {
+  border: 1px solid;
+  border-image-source: linear-gradient(to right, #fff, #333);
+  border-image-slice: 1;
+}
+
 @layer base {
   * {
     @apply border-border;

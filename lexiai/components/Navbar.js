@@ -19,12 +19,14 @@ import {
 import { Input } from './ui/input';
 import { createDeck } from '@/app/actions/flashcards';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ModeToggle } from "@/components/mode-toggle"; 
+import { useTheme } from "next-themes";
 
 const Navbar = () => {
     const { isSignedIn } = useUser();
     const pathname = usePathname();
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+    const { theme, setTheme } = useTheme();
     // Create form dialog fields
     const nameRef = useRef(null);
     const descriptionRef = useRef(null);
@@ -42,9 +44,13 @@ const Navbar = () => {
     });
 
     return (
-        <nav className="flex items-center justify-between p-4 shadow-md lg:px-32 md:px-12 sm:px-6 bg-gray-800 text-white relative">
+        <nav className={`flex items-center justify-between p-4 shadow-md lg:px-32 md:px-12 sm:px-6 ${
+            theme === "light"
+              ? "bg-gradient-to-r from-pink-100 to-blue-400 to-purple-600 text-gray-800"
+              : "bg-gradient-to-r from-gray-900 to-indigo-800 to-purple-900 text-white"
+          } relative`}>
             <Link href="/" className="flex items-center space-x-4">
-                <Book className="h-8 w-8 text-white" />
+                <Book className={`h-8 w-8 ${theme === "light" ? "text-gray-800" : "text-white"}`} />
                 <span className="text-xl font-bold">Lexi AI</span>
             </Link>
 
@@ -53,7 +59,7 @@ const Navbar = () => {
                     <Link href={link.href} key={index}>
                         <Button
                             variant="ghost"
-                            className="rounded-2xl py-0 hover:bg-white hover:text-black transition-colors"
+                            className="rounded-2xl py-0 hover:bg-purple-200 hover:text-gray-800 transition-colors"
                         >
                             {link.title}
                         </Button>
@@ -62,6 +68,7 @@ const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-3">
+            <ModeToggle />
                 <Dialog>
                     <DialogTrigger asChild>
                         <Button
