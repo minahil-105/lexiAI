@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { collection, doc, getDocs } from 'firebase/firestore';
-import db from '../../firebase';; // Adjust the import path as needed
+import { db } from '../../../firebase'; ; // Adjust the import path as needed
 import { useSearchParams } from 'next/navigation';
 
 export default function FlashcardSet() {
