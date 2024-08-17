@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { doc, collection, getDoc, writeBatch, setDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import db from '../../firebase';
 import { useUser } from '@clerk/nextjs';
 
 export default function Generate() {
