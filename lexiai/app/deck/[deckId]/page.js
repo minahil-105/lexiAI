@@ -16,6 +16,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { Trash, X } from 'lucide-react'
 
+
 const Page = ({ params: { deckId } }) => {
     const [openAddCardDialog, setOpenAddCardDialog] = useState(false)
     const [editDeck, setEditDeck] = useState(false)
@@ -113,7 +114,7 @@ const Page = ({ params: { deckId } }) => {
             </div>
 
             {/* flashcards */}
-            <div className="flex flex-wrap gap-4 justify-start ">
+            <div className="flex flex-wrap gap-4 justify-center ">
                 {deck.cards?.map((flashcard) => (
                     <div key={flashcard.id} className={`${editDeck ? "flip-card-edit-mode" : "flip-card"} w-64 h-56`}>
                         <div className="flip-card-inner p-0 m-0 relative">

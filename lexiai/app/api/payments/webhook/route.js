@@ -298,8 +298,13 @@ async function handleSubscriptionEvent(
     event, // Stripe.Event,
     type, // "created" | "updated" | "deleted"
 ) {
+
+    console.log('handleSubscriptionEvent', type);
+
     const subscription = event.data.object; // as Stripe.Subscription
+    console.log('subscription', subscription);
     const customerEmail = await getCustomerEmail(subscription.customer);
+    console.log('customerEmail', customerEmail);
 
     if (!customerEmail) {
         return NextResponse.json({
@@ -446,6 +451,8 @@ async function handleCheckoutSessionCompleted(event) { // Stripe.Event
         }
     }
 }
+
+
 
 async function webhooksHandler(
     reqText, //: string,

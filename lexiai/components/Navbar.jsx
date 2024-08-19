@@ -24,7 +24,7 @@ import { useTheme } from "next-themes";
 
 const Navbar = () => {
     const { isSignedIn } = useUser();
-    const pathname = usePathname();
+    const [addDialog, setAddDialog] = useState(false);
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { theme, setTheme } = useTheme();
     // Create form dialog fields
@@ -33,9 +33,10 @@ const Navbar = () => {
     const contentRef = useRef(null);
 
     const queryClient = useQueryClient();
-    const { mutate: handleCreateDeck } = useMutation({
+    const { mutate: handleCreateDeck, isPending } = useMutation({
         mutationFn: async (formData) => {
             await createDeck(formData);
+            setAddDialog(false);
         },
         onSuccess: () => {
             queryClient.invalidateQueries('decks');
@@ -69,7 +70,7 @@ const Navbar = () => {
 
             <div className="flex items-center gap-3">
             <ModeToggle />
-                <Dialog>
+                <Dialog open={addDialog} onOpenChange={setAddDialog}>
                     <DialogTrigger asChild>
                         <Button
                             variant="ghost"
@@ -93,13 +94,13 @@ const Navbar = () => {
                             <Input placeholder="Deck Name" ref={nameRef} />
                             <Input placeholder="Deck Description" ref={descriptionRef} />
                             <Textarea placeholder="Generate using Lexi AI (leave blank for empty deck)" ref={contentRef} />
-                            <DialogClose asChild>
-                                <Button onClick={() => handleCreateDeck({
-                                    name: nameRef.current.value,
-                                    description: descriptionRef.current.value,
-                                    content: contentRef.current.value
-                                })} className="w-full">Create Deck</Button>
-                            </DialogClose>
+                                <Button disabled={isPending} onClick={ () => {
+                                    handleCreateDeck({  name: nameRef.current.value,
+                                        description: descriptionRef.current.value,
+                                        content: contentRef.current.value
+                                    })
+                                    
+                                }} className="w-full">{ isPending ? "Creating..." : "Create Deck"}</Button>
                         </div>
                     </DialogContent>
                 </Dialog>
