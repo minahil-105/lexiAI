@@ -37,21 +37,25 @@ export async function getDeck(deckId) {
     const { userId } = auth();
     if (!userId) return { error: 'User not authenticated' };
 
+    console.log('checkpoint 1', deckId);
     if (!deckId) return { error: 'Deck ID is required to get cards' };
 
     try {
         const deckRef = doc(db, 'decks', deckId);
         const deckDoc = await getDoc(deckRef);
 
+        console.log('checkpoint 2');
         if (!deckDoc.exists()) {
             return { error: 'Deck not found' };
         }
 
         const deckData = deckDoc.data();
+        console.log('checkpoint 2');
         if (deckData.userId !== userId) {
             return { error: 'Access denied' };
         }
 
+        console.log('checkpoint 3');
         const cardsQuery = query(collection(deckRef, 'cards'));
         const cardsSnapshot = await getDocs(cardsQuery);
         const serializedDeckData = {
@@ -67,6 +71,7 @@ export async function getDeck(deckId) {
                 nextReview: doc.data().nextReview?.toDate().toISOString(),
             })),
         };
+        console.log('checkpoint 3');
         return serializedDeckData;
 
     } catch (error) {
@@ -182,7 +187,7 @@ export async function createDeck(formData) {
 
         return {
             deckId: deckRef.id,
-            message: `Deck created with ${flashcard.length} flashcards}`
+            message: `Deck created with ${flashcards.length} flashcards}`
         };
     } catch (error) {
         console.error('Error creating deck:', error);
