@@ -31,6 +31,50 @@ users: {
     },
 }
 */
+
+// Get a deck
+export async function getDeck(deckId) {
+    const { userId } = auth();
+    if (!userId) return { error: 'User not authenticated' };
+
+    if (!deckId) return { error: 'Deck ID is required to get cards' };
+
+    try {
+        const deckRef = doc(db, 'decks', deckId);
+        const deckDoc = await getDoc(deckRef);
+
+        if (!deckDoc.exists()) {
+            return { error: 'Deck not found' };
+        }
+
+        const deckData = deckDoc.data();
+        if (deckData.userId !== userId) {
+            return { error: 'Access denied' };
+        }
+
+        const cardsQuery = query(collection(deckRef, 'cards'));
+        const cardsSnapshot = await getDocs(cardsQuery);
+        const serializedDeckData = {
+            id: deckDoc.id,
+            ...deckData,
+            createdAt: deckData.createdAt.toDate().toISOString(),
+            lastModified: deckData.lastModified.toDate().toISOString(),
+            cards: cardsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                createdAt: doc.data().createdAt.toDate().toISOString(),
+                lastReviewed: doc.data().lastReviewed?.toDate().toISOString(),
+                nextReview: doc.data().nextReview?.toDate().toISOString(),
+            })),
+        };
+        return serializedDeckData;
+
+    } catch (error) {
+        console.error('Error fetching deck data:', error);
+        return { error: 'Failed to fetch deck data' };
+    };
+}
+
 // Get all decks for a user
 export async function getUserDecks() {
     const { userId } = auth();
@@ -147,8 +191,6 @@ export async function createDeck(formData) {
 
 }
 
-
-
 // Delete a card from a deck
 export async function deleteCard(formData) {
     const { userId } = auth();
@@ -220,6 +262,7 @@ export async function updateCard(formData) {
     }
 }
 
+// generate flashcards
 async function generateFlashcards(text) {
     try {
 
