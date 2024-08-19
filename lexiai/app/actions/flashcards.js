@@ -58,25 +58,25 @@ export async function createDeck(formData) {
         let flashcardsCount = 0;
         if (content) {
             console.log('Generating flashcards');
-            try {
-                const flashcards = await generateFlashcards(content);
-                console.log(`Generated ${flashcards.length} flashcards`);
 
-                for (const flashcard of flashcards) {
-                    const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
-                    batch.set(cardRef, {
-                        frontContent: flashcard.front,
-                        backContent: flashcard.back,
-                        createdAt: serverTimestamp(),
-                        lastReviewed: null,
-                        nextReview: null,
-                    });
-                    flashcardsCount++;
-                }
-            } catch (flashcardError) {
-                console.error('Error generating flashcards:', flashcardError);
-                return { error: `Failed to generate flashcards: ${flashcardError.message}` };
+            const flashcards = await generateFlashcards(content);
+
+            console.log(`Generated ${flashcards.length} flashcards`);
+
+            for (const flashcard of flashcards) {
+                const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
+                batch.set(cardRef, {
+                    frontContent: flashcard.front,
+                    backContent: flashcard.back,
+                    createdAt: serverTimestamp(),
+                    lastReviewed: null,
+                    nextReview: null,
+                });
             }
+
+            console.error('Error generating flashcards:', flashcardError);
+            return { error: `Failed to generate flashcards: ${flashcardError.message}` };
+
         }
 
         console.log('Committing batch');
@@ -156,48 +156,60 @@ export async function addCardToDeck(formData) {
 }
 
 // Get a deck
-export async function getDeck(deckId) {
+export async function createDeck(formData) {
     const { userId } = auth();
     if (!userId) return { error: 'User not authenticated' };
 
-    if (!deckId) return { error: 'Deck ID is required to get cards' };
+    const { name, description, content } = formData;
 
     try {
-        const deckRef = doc(db, 'decks', deckId);
-        const deckDoc = await getDoc(deckRef);
+        // Start a new batch
+        const batch = writeBatch(db);
 
-        if (!deckDoc.exists()) {
-            return { error: 'Deck not found' };
+        // Create the deck document
+        const deckRef = doc(collection(db, 'decks'));
+        batch.set(deckRef, {
+            userId,
+            name,
+            description,
+            createdAt: serverTimestamp(),
+            lastModified: serverTimestamp(),
+        });
+
+        // Generate flashcards
+        if (content) {
+            const flashcards = await generateFlashcards(content)
+
+            if (flashcards) {
+                // Add flashcards to the deck if they were generated
+                for (const flashcard of flashcards) {
+                    const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
+                    batch.set(cardRef, {
+                        frontContent: flashcard.front,
+                        backContent: flashcard.back,
+                        createdAt: serverTimestamp(),
+                        lastReviewed: null,
+                        nextReview: null,
+                    });
+                }
+            }
         }
 
-        const deckData = deckDoc.data();
-        if (deckData.userId !== userId) {
-            return { error: 'Access denied' };
-        }
+        // Commit the batch
+        await batch.commit();
 
-        const cardsQuery = query(collection(deckRef, 'cards'));
-        const cardsSnapshot = await getDocs(cardsQuery);
-        const serializedDeckData = {
-            id: deckDoc.id,
-            ...deckData,
-            createdAt: deckData.createdAt.toDate().toISOString(),
-            lastModified: deckData.lastModified.toDate().toISOString(),
-            cards: cardsSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                createdAt: doc.data().createdAt.toDate().toISOString(),
-                lastReviewed: doc.data().lastReviewed?.toDate().toISOString(),
-                nextReview: doc.data().nextReview?.toDate().toISOString(),
-            })),
+        return {
+            deckId: deckRef.id,
+            message: `Deck created with ${flashcard.length} flashcards}`
         };
-
-        return serializedDeckData;
-
     } catch (error) {
-        console.error('Error fetching deck data:', error);
-        return { error: 'Failed to fetch deck data' };
-    };
+        console.error('Error creating deck:', error);
+        return { error: 'Failed to create deck and flashcards' };
+    }
+
 }
+
+
 
 // Delete a card from a deck
 export async function deleteCard(formData) {
@@ -272,6 +284,7 @@ export async function updateCard(formData) {
 
 async function generateFlashcards(text) {
     try {
+
         const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -284,7 +297,6 @@ async function generateFlashcards(text) {
         const flashcards = JSON.parse(data.response).flashcards;
         return flashcards;
     } catch (error) {
-        console.error('Error generating flashcards:', error);
-        throw error;
+        return;
     }
 }
