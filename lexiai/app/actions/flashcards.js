@@ -31,68 +31,6 @@ users: {
     },
 }
 */
-
-// Create a new deck
-export async function createDeck(formData) {
-    const { userId } = auth();
-    if (!userId) return { error: 'User not authenticated' };
-
-    const { name, description, content } = formData;
-
-    try {
-        console.log('Starting deck creation process');
-
-        const batch = writeBatch(db);
-
-        const deckRef = doc(collection(db, 'decks'));
-        batch.set(deckRef, {
-            userId,
-            name,
-            description,
-            createdAt: serverTimestamp(),
-            lastModified: serverTimestamp(),
-        });
-
-        console.log('Deck document created');
-
-        let flashcardsCount = 0;
-        if (content) {
-            console.log('Generating flashcards');
-
-            const flashcards = await generateFlashcards(content);
-
-            console.log(`Generated ${flashcards.length} flashcards`);
-
-            for (const flashcard of flashcards) {
-                const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
-                batch.set(cardRef, {
-                    frontContent: flashcard.front,
-                    backContent: flashcard.back,
-                    createdAt: serverTimestamp(),
-                    lastReviewed: null,
-                    nextReview: null,
-                });
-            }
-
-            console.error('Error generating flashcards:', flashcardError);
-            return { error: `Failed to generate flashcards: ${flashcardError.message}` };
-
-        }
-
-        console.log('Committing batch');
-        await batch.commit();
-        console.log('Batch committed successfully');
-
-        return {
-            deckId: deckRef.id,
-            message: `Deck created with ${flashcardsCount} flashcards`
-        };
-    } catch (error) {
-        console.error('Error creating deck:', error);
-        return { error: `Failed to create deck: ${error.message}` };
-    }
-}
-
 // Get all decks for a user
 export async function getUserDecks() {
     const { userId } = auth();
