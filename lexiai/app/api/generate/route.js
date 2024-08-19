@@ -30,6 +30,7 @@ export async function POST(request) {
       ]
     });
     const result = await chat.sendMessage(message);
+    console.log(result.response.text());
     return NextResponse.json({ response: result.response.text() });
   } catch (error) {
     console.log('Error:', error);

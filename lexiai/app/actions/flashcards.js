@@ -40,10 +40,10 @@ export async function createDeck(formData) {
     const { name, description, content } = formData;
 
     try {
-        // Start a new batch
+        console.log('Starting deck creation process');
+
         const batch = writeBatch(db);
 
-        // Create the deck document
         const deckRef = doc(collection(db, 'decks'));
         batch.set(deckRef, {
             userId,
@@ -53,37 +53,44 @@ export async function createDeck(formData) {
             lastModified: serverTimestamp(),
         });
 
-        // Generate flashcards
+        console.log('Deck document created');
+
+        let flashcardsCount = 0;
         if (content) {
-            const flashcards = await generateFlashcards(content);
+            console.log('Generating flashcards');
+            try {
+                const flashcards = await generateFlashcards(content);
+                console.log(`Generated ${flashcards.length} flashcards`);
 
-
-            // Add flashcards to the deck
-            for (const flashcard of flashcards) {
-                const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
-                batch.set(cardRef, {
-                    frontContent: flashcard.front,
-                    backContent: flashcard.back,
-                    createdAt: serverTimestamp(),
-                    lastReviewed: null,
-                    nextReview: null,
-                });
+                for (const flashcard of flashcards) {
+                    const cardRef = doc(collection(db, 'decks', deckRef.id, 'cards'));
+                    batch.set(cardRef, {
+                        frontContent: flashcard.front,
+                        backContent: flashcard.back,
+                        createdAt: serverTimestamp(),
+                        lastReviewed: null,
+                        nextReview: null,
+                    });
+                    flashcardsCount++;
+                }
+            } catch (flashcardError) {
+                console.error('Error generating flashcards:', flashcardError);
+                return { error: `Failed to generate flashcards: ${flashcardError.message}` };
             }
-
         }
 
-        // Commit the batch
+        console.log('Committing batch');
         await batch.commit();
+        console.log('Batch committed successfully');
 
         return {
             deckId: deckRef.id,
-            message: `Deck created with ${10} flashcards`
+            message: `Deck created with ${flashcardsCount} flashcards`
         };
     } catch (error) {
         console.error('Error creating deck:', error);
-        return { error: 'Failed to create deck and flashcards' };
+        return { error: `Failed to create deck: ${error.message}` };
     }
-
 }
 
 // Get all decks for a user

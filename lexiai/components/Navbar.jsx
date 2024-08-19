@@ -23,25 +23,26 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { useTheme } from "next-themes";
 
 const Navbar = () => {
-  const { isSignedIn } = useUser();
-  const pathname = usePathname();
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  // Create form dialog fields
-  const nameRef = useRef(null);
-  const descriptionRef = useRef(null);
-  const contentRef = useRef(null);
+    const { isSignedIn } = useUser();
+    const [addDialog, setAddDialog] = useState(false);
+    const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { theme, setTheme } = useTheme();
+    // Create form dialog fields
+    const nameRef = useRef(null);
+    const descriptionRef = useRef(null);
+    const contentRef = useRef(null);
 
-  const queryClient = useQueryClient();
-  const { mutate: handleCreateDeck } = useMutation({
-    mutationFn: async (formData) => {
-      await createDeck(formData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries("decks");
-      console.log("Deck created successfully");
-    },
-  });
+    const queryClient = useQueryClient();
+    const { mutate: handleCreateDeck, isPending } = useMutation({
+        mutationFn: async (formData) => {
+            await createDeck(formData);
+            setAddDialog(false);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries('decks');
+            console.log('Deck created successfully');
+        }
+    });
 
   return (
     <nav
@@ -73,57 +74,46 @@ const Navbar = () => {
         ))}
       </div>
 
-      <div className="flex items-center gap-3">
-        <ModeToggle />
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative rounded-full group hover:bg-white transition-colors"
-            >
-              <Plus
-                size={18}
-                className="text-white group-hover:text-black transition-colors"
-                title="Add deck"
-              />
-              <span className="absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 dark:bg-white dark:text-black">
-                Add deck
-              </span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create new Deck</DialogTitle>
-              <DialogDescription>
-                Create a new deck to store your flashcards and let AI do the
-                rest.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col gap-2">
-              <Input placeholder="Deck Name" ref={nameRef} />
-              <Input placeholder="Deck Description" ref={descriptionRef} />
-              <Textarea
-                placeholder="Generate using Lexi AI (leave blank for empty deck)"
-                ref={contentRef}
-              />
-              <DialogClose asChild>
-                <Button
-                  onClick={() =>
-                    handleCreateDeck({
-                      name: nameRef.current.value,
-                      description: descriptionRef.current.value,
-                      content: contentRef.current.value,
-                    })
-                  }
-                  className="w-full"
-                >
-                  Create Deck
-                </Button>
-              </DialogClose>
-            </div>
-          </DialogContent>
-        </Dialog>
+            <div className="flex items-center gap-3">
+            <ModeToggle />
+                <Dialog open={addDialog} onOpenChange={setAddDialog}>
+                    <DialogTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="relative rounded-full group hover:bg-white transition-colors"
+                        >
+                            <Plus
+                                size={18}
+                                className="text-white group-hover:text-black transition-colors"
+                                title="Add deck"
+                            />
+                            <span className="absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 dark:bg-white dark:text-black">
+                              Add deck
+                            </span>
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Create new Deck</DialogTitle>
+                            <DialogDescription>
+                                Create a new deck to store your flashcards and let AI do the rest.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className='flex flex-col gap-2'>
+                            <Input placeholder="Deck Name" ref={nameRef} />
+                            <Input placeholder="Deck Description" ref={descriptionRef} />
+                            <Textarea placeholder="Generate using Lexi AI (leave blank for empty deck)" ref={contentRef} />
+                                <Button disabled={isPending} onClick={ () => {
+                                    handleCreateDeck({  name: nameRef.current.value,
+                                        description: descriptionRef.current.value,
+                                        content: contentRef.current.value
+                                    })
+                                    
+                                }} className="w-full">{ isPending ? "Creating..." : "Create Deck"}</Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
         {!isSignedIn ? (
           <>

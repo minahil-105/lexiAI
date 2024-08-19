@@ -16,6 +16,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Trash, X } from 'lucide-react';
 
+
 const Page = ({ params: { deckId } }) => {
     const [openAddCardDialog, setOpenAddCardDialog] = useState(false);
     const [editDeck, setEditDeck] = useState(false);
