@@ -5,7 +5,6 @@ export default function Cancel() {
 
     return (
         <main className="flex min-w-screen flex-col items-center justify-between mt-40">
-            <NavBar />
             <h1 className="mt-[20rem] scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
                 Payment Cancelled 😢
             </h1>
